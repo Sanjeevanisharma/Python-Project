@@ -1,0 +1,70 @@
+import tkinter as tk
+from tkinter import colorchooser
+
+def pick_color():
+    color_code = colorchooser.askcolor(title="Choose a color")
+    if color_code[1]:  # Check if a color was selected
+        label.config(text=f"RGB: {color_code[0]} | HEX: {color_code[1]}")
+        root.config(bg=color_code[1])  # Change background color of the root window
+        label.config(bg=color_code[1], fg="white")  # Change label background and text color
+        color_canvas.config(bg=color_code[1])  # Change canvas color to the selected color
+        color_name = color_code[1]  # Get the selected color in HEX format
+        color_name_label.config(text=color_name)  # Display color name in the canvas
+
+def hover_in(event):
+    event.widget.config(bg="#45a049")  # Change button color on hover
+
+def hover_out(event):
+    event.widget.config(bg="#4CAF50")  # Revert button color
+
+def create_rounded_rectangle(canvas, x0, y0, x1, y1, r=25, **kwargs):
+    """Draw a rounded rectangle on the canvas."""
+    points = [
+        x0 + r, y0,
+        x1 - r, y0,
+        x1, y0 + r,
+        x1, y1 - r,
+        x1 - r, y1,
+        x0 + r, y1,
+        x0, y1 - r,
+        x0, y0 + r,
+    ]
+    return canvas.create_polygon(points, **kwargs, smooth=True)
+
+# Initialize the Tkinter window
+root = tk.Tk()
+root.title("Creative Color Picker")
+root.geometry("400x400")  # Set window size
+root.configure(bg="#f0f0f0")  # Light gray background for the main window
+
+# Add a heading label
+header = tk.Label(root, text="Color Picker", font=("Arial", 24, "bold"), bg="#f0f0f0", fg="#333")
+header.pack(pady=(20, 10))
+
+# Create a label to display the selected color
+label = tk.Label(root, text="Pick a color", font=("Arial", 16), bg="#f0f0f0", fg="#333")
+label.pack(pady=20)
+
+# Create a button to choose color
+button = tk.Button(root, text="Choose Color", command=pick_color, font=("Arial", 14), bg="#4CAF50", fg="white", borderwidth=0, relief="flat")
+button.pack(pady=10, padx=20)
+
+# Add hover effects to the button
+button.bind("<Enter>", hover_in)
+button.bind("<Leave>", hover_out)
+
+# Create a canvas to show the selected color with rounded corners
+color_canvas = tk.Canvas(root, width=300, height=100, bg="white", borderwidth=2, relief="flat")
+color_canvas.pack(pady=20)
+create_rounded_rectangle(color_canvas, 0, 0, 300, 100, r=20, fill="white", outline="gray")
+
+# Create a label inside the canvas to display the selected color name
+color_name_label = tk.Label(color_canvas, text="", font=("Arial", 16, "bold"), bg="white", fg="black")
+color_name_label.place(relx=0.5, rely=0.5, anchor="center")  # Center the label in the canvas
+
+# Add a footer with instructions
+footer = tk.Label(root, text="Hover over the button to see the effect!", font=("Arial", 12), bg="#f0f0f0", fg="#555")
+footer.pack(side="bottom", pady=(10, 20))
+
+# Run the Tkinter event loop
+root.mainloop()
